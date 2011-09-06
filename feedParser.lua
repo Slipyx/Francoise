@@ -25,6 +25,14 @@ local http = require("socket.http")
 require("luaxml")
 local dateUtils = require("dateUtils")
 
+local function GetDate(item)
+	local pubDate = item:find("pubDate") or item:find("dc:date") or item:find("updated")
+	if not pubDate then print("PUBDATE NOT FOUND!") return end
+	pubDate = pubDate[1]
+	if string.sub(pubDate, 1, 1) == "2" then pubDate = dateUtils.DcToPub(pubDate) end
+	return pubDate
+end
+
 local function CheckFeed(s, curFeed)
 	-- Check feed
 	print(string.format("Checking (%d) %s...", curFeed, FEEDS[curFeed].name))
@@ -37,7 +45,7 @@ local function CheckFeed(s, curFeed)
 	end c = nil
 	if not xmlTxt then print("CHECK FAILED!") return end
 	local xml = xml.eval(xmlTxt)
-	local xchannel =  xml:find("channel") or xml:find("rdf:RDF") or xml:find("feed")
+	local xchannel =  xml:find("rdf:RDF") or xml:find("channel") or xml:find("feed")
 	local xitems = {}
 	if xchannel ~= nil then
 		for i = 1, #xchannel do
@@ -50,10 +58,8 @@ local function CheckFeed(s, curFeed)
 
 	local xnewItems = {}
 	for i = 1, #xitems do
-		local pubDate = xitems[i]:find("pubDate") or xitems[i]:find("dc:date") or xitems[i]:find("updated")
-		if not pubDate then print("PUBDATE NOT FOUND!") return end
-		pubDate = pubDate[1]
-		if string.sub(pubDate, 1, 1) == "2" then pubDate = dateUtils.DcToPub(pubDate) end
+		local pubDate = GetDate(xitems[i])
+		if not pubDate then return end
 		if dateUtils.DateIsNewer(FEEDS[curFeed].lastDate, pubDate) then
 			table.insert(xnewItems, xitems[i])
 		end
@@ -61,13 +67,11 @@ local function CheckFeed(s, curFeed)
 	end
 	-- Print all new ones
 	for i = 1, #xnewItems do
-		local pubDate = xnewItems[i]:find("pubDate") or xnewItems[i]:find("dc:date") or xnewItems[i]:find("updated")
-		pubDate = pubDate[1]
-		if string.sub(pubDate, 1, 1) == "2" then pubDate = dateUtils.DcToPub(pubDate) end
+		local pubDate = GetDate(xnewItems[i])
 		if not FEEDS[curFeed].firstTime then
 			local link = xnewItems[i]:find("link")[1] or xnewItems[i]:find("id")[1]
-			for i = 1, #CHANNELS do
-				s:sendChat(CHANNELS[i], string.format("%s%s: %s <15%s>", FEEDS[curFeed].c, FEEDS[curFeed].name, xnewItems[i][1][1], link))
+			for j = 1, #CHANNELS do
+				s:sendChat(CHANNELS[j], string.format("%s%s: %s <15%s>", FEEDS[curFeed].c, FEEDS[curFeed].name, xnewItems[i][1][1], link))
 			end
 			link = nil
 		end
