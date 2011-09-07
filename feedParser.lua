@@ -39,7 +39,7 @@ local function CheckFeed(s, curFeed)
 	local xmlTxt
 	local c = 1
 	while xmlTxt == nil and c < 5 do
-		print("Attempt #" .. c)
+		print("Attempt #" .. c .. "...")
 		xmlTxt = http.request(FEEDS[curFeed].url)
 		c = c + 1
 	end c = nil
@@ -70,6 +70,7 @@ local function CheckFeed(s, curFeed)
 		local pubDate = GetDate(xnewItems[i])
 		if not FEEDS[curFeed].firstTime then
 			local link = xnewItems[i]:find("link")[1] or xnewItems[i]:find("id")[1]
+			print("NEW!")
 			for j = 1, #CHANNELS do
 				s:sendChat(CHANNELS[j], string.format("%s%s: %s <15%s>", FEEDS[curFeed].c, FEEDS[curFeed].name, xnewItems[i][1][1], link))
 			end

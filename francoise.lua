@@ -34,7 +34,9 @@ local s = 0
 
 local function Connect()
 	s = irc.new(USER)
+	print("Connecting...")
 	s:connect(CONNECTION)
+	print("Joining...")
 	for i = 1, #CHANNELS do
 		s:join(CHANNELS[i])
 	end
@@ -46,6 +48,7 @@ Connect()
 -- Don't know if this will handle reconnects
 s:hook("OnDisconnect",
 	function(message, errorOccurred)
+		print("Disconnected!", message, errorOccurred)
 		s = nil
 		sleep(4)
 		Connect()
