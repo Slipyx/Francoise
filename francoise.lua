@@ -25,6 +25,7 @@ local sleep = require("socket").sleep
 require("config")
 local timer = require("hump.timer")
 local feedParser = require("feedParser")
+local log = require("logger").log
 
 -- Frame time vars
 local tt = 0
@@ -34,12 +35,13 @@ local s = 0
 
 local function Connect()
 	s = irc.new(USER)
-	print("Connecting...")
+	log("Connecting...")
 	s:connect(CONNECTION)
-	print("Joining...")
+	log("Joining...")
 	for i = 1, #CHANNELS do
 		s:join(CHANNELS[i])
 	end
+	print()
 end
 
 Connect()
@@ -48,13 +50,13 @@ Connect()
 -- Don't know if this will handle reconnects
 s:hook("OnDisconnect",
 	function(message, errorOccurred)
-		print("Disconnected!", message, errorOccurred)
+		log("Disconnected!", message, errorOccurred)
 		s = nil
 		sleep(4)
 		Connect()
 	end
 )
---s:hook("OnRaw", function(line) print(line) end)
+--s:hook("OnRaw", function(line) log(line) end)
 
 -- Setup feed checker intervals
 for i = 1, #FEEDS do

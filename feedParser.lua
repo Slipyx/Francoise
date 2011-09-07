@@ -24,10 +24,11 @@ require("config")
 local http = require("socket.http")
 require("luaxml")
 local dateUtils = require("dateUtils")
+local log = require("logger").log
 
 local function GetDate(item)
 	local pubDate = item:find("pubDate") or item:find("dc:date") or item:find("updated")
-	if not pubDate then print("PUBDATE NOT FOUND!") return end
+	if not pubDate then log("PUBDATE NOT FOUND!") return end
 	pubDate = pubDate[1]
 	if string.sub(pubDate, 1, 1) == "2" then pubDate = dateUtils.DcToPub(pubDate) end
 	return pubDate
@@ -35,15 +36,15 @@ end
 
 local function CheckFeed(s, curFeed)
 	-- Check feed
-	print(string.format("Checking (%d) %s...", curFeed, FEEDS[curFeed].name))
+	log(string.format("Checking (%d) %s...", curFeed, FEEDS[curFeed].name))
 	local xmlTxt
 	local c = 1
 	while xmlTxt == nil and c < 5 do
-		print("Attempt #" .. c .. "...")
+		log("Attempt #" .. c .. "...")
 		xmlTxt = http.request(FEEDS[curFeed].url)
 		c = c + 1
 	end c = nil
-	if not xmlTxt then print("CHECK FAILED!") return end
+	if not xmlTxt then log("CHECK FAILED!") return end
 	local xml = xml.eval(xmlTxt)
 	local xchannel =  xml:find("rdf:RDF") or xml:find("channel") or xml:find("feed")
 	local xitems = {}
@@ -70,7 +71,7 @@ local function CheckFeed(s, curFeed)
 		local pubDate = GetDate(xnewItems[i])
 		if not FEEDS[curFeed].firstTime then
 			local link = xnewItems[i]:find("link")[1] or xnewItems[i]:find("id")[1]
-			print("NEW!")
+			log("NEW " .. FEEDS[curFeed].name .. " ITEM!")
 			for j = 1, #CHANNELS do
 				s:sendChat(CHANNELS[j], string.format("%s%s: %s <15%s>", FEEDS[curFeed].c, FEEDS[curFeed].name, xnewItems[i][1][1], link))
 			end
@@ -81,7 +82,8 @@ local function CheckFeed(s, curFeed)
 		end
 		pubDate = nil
 	end
-	print(FEEDS[curFeed].name .. " newest date: " .. FEEDS[curFeed].lastDate)
+	log(FEEDS[curFeed].name .. " newest date: " .. FEEDS[curFeed].lastDate)
+	print()
 	FEEDS[curFeed].firstTime = nil
 end
 
