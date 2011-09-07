@@ -20,9 +20,15 @@ misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 --]]
 
+-- Parse command line arguments
+for i = 1, #arg do
+	if arg[i] == "--config" then cfgFile = arg[i + 1] end
+end
+if not cfgFile then cfgFile = "config" end
+
 require("irc")
 local sleep = require("socket").sleep
-require("config")
+require(cfgFile)
 local timer = require("hump.timer")
 local feedParser = require("feedParser")
 local log = require("logger").log

@@ -13,7 +13,11 @@ Released under the zlib license, see LICENSE.txt for full information.
 Running
 -------
 To run the bot, simply call "lua francoise.lua", or double click francoise.lua
-if you have a Lua installation like LuaForWindows.
+if you have a Lua installation like LuaForWindows. You can specify a different
+config file by using the command line argument --config. For example, running
+"lua francoise.lua --config redditNews" will start the bot using the
+configuration information in the file "redditNews.lua". If you do not use the
+--config argument, the bot will use the default "config.lua" file.
 
 Requirements
 ------------

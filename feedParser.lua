@@ -20,7 +20,7 @@ misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 --]]
 
-require("config")
+require(cfgFile)
 local http = require("socket.http")
 require("luaxml")
 local dateUtils = require("dateUtils")
