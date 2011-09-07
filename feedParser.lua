@@ -66,7 +66,7 @@ local function CheckFeed(s, curFeed)
 		pubDate = nil
 	end
 	-- Print all new ones
-	for i = 1, #xnewItems do
+	for i = #xnewItems, 1, -1 do
 		local pubDate = GetDate(xnewItems[i])
 		if not FEEDS[curFeed].firstTime then
 			local link = xnewItems[i]:find("link")[1] or xnewItems[i]:find("id")[1]
