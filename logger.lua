@@ -23,10 +23,19 @@ misrepresented as being the original software.
 local date = os.date
 local print = print
 
-local function log(msg)
+local function log(...)
+	local nargs = select("#", ...)
 	local t = date("*t")
 	local ts = string.format("%02d:%02d:%02d", t.hour, t.min, t.sec)
-	print(string.format("[%s] %s", ts, msg))
+	local logString = ""
+
+	if nargs >= 1 then logString = string.format("%s", select(1, ...))
+		for i = 2, nargs do
+			logString = string.format("%s      %s", logString, select(i, ...))
+		end
+	end
+
+	print(string.format("[%s] %s**", ts, logString))
 end
 
 return { log = log }
