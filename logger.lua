@@ -35,7 +35,7 @@ local function log(...)
 		end
 	end
 
-	print(string.format("[%s] %s**", ts, logString))
+	print(string.format("[%s] %s", ts, logString))
 end
 
 return { log = log }
