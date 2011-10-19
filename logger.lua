@@ -27,9 +27,9 @@ local function log(...)
 	local vargs = {...}
 	local logString = ""
 
-	if #vargs >= 1 then logString = string.format("%s", vargs[1])
+	if #vargs >= 1 then logString = string.format("%s", tostring(vargs[1]))
 		for i = 2, #vargs do
-			logString = string.format("%s      %s", logString, vargs[i])
+			logString = string.format("%s      %s", logString, tostring(vargs[i]))
 		end
 	end
 
