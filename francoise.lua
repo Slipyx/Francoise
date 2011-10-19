@@ -58,7 +58,7 @@ s:hook("OnDisconnect",
 	function(message, errorOccurred)
 		log("Disconnected!", message, errorOccurred)
 		s = nil
-		sleep(4)
+		sleep(30)
 		Connect()
 	end
 )
@@ -77,6 +77,6 @@ while true do
 	tt = os.clock()
 	s:think()
 	timer.update(dt)
-	sleep(0.5)
+	sleep(1)
 	dt = os.clock() - tt
 end
