@@ -33,7 +33,7 @@ local function log(...)
 		end
 	end
 
-	print(string.format("[%s] %s", date("%H:%M:%S"), logString))
+	print(string.format("[%s] %s", date("%Y.%m.%d %H:%M:%S"), logString))
 end
 
 return { log = log }
