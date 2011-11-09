@@ -37,14 +37,18 @@ local log = require("logger").log
 local tt = 0
 local dt = 0
 -- IRC user
-local s = 0
+local s
 
 local function Connect()
-	s = irc.new(USER)
+    while s == nil do
+        log("Creating new user...")
+        s = irc.new(USER)
+    end
 	log("Connecting...")
 	s:connect(CONNECTION)
 	log("Joining...")
 	for i = 1, #CHANNELS do
+        log("    " .. CHANNELS[i])
 		s:join(CHANNELS[i])
 	end
 	print()
@@ -57,8 +61,9 @@ Connect()
 s:hook("OnDisconnect",
 	function(message, errorOccurred)
 		log("Disconnected!", message, errorOccurred)
+        s:disconnect("lol")
 		s = nil
-		sleep(30)
+		sleep(4)
 		Connect()
 	end
 )
