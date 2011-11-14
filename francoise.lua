@@ -37,37 +37,39 @@ local log = require("logger").log
 local tt = 0
 local dt = 0
 -- IRC user
-local s
+log("**** BOT START ****")
+local s = irc.new(USER)
+
+local Reconnect = 0 -- Forward declare
 
 local function Connect()
     while s == nil do
         log("Creating new user...")
         s = irc.new(USER)
     end
+    --s:hook("OnRaw", function(line) log(line) end) -- Raw logging
 	log("Connecting...")
-	s:connect(CONNECTION)
-	log("Joining...")
-	for i = 1, #CHANNELS do
-        log("    " .. CHANNELS[i])
-		s:join(CHANNELS[i])
-	end
-	print()
+	if not pcall(s.connect, s, CONNECTION) then
+        Reconnect("Connect attempt failed!", true)
+    else
+        s:hook("OnDisconnect", Reconnect)
+        log("Joining...")
+        for i = 1, #CHANNELS do
+            log("    " .. CHANNELS[i])
+            s:join(CHANNELS[i])
+        end
+        print()
+    end
+end
+
+Reconnect = function(message, errorOccurred)
+    log("Disconnected!", message, errorOccurred)
+    s = nil
+    sleep(4)
+    Connect()
 end
 
 Connect()
-
--- Hooks
--- Don't know if this will handle reconnects
-s:hook("OnDisconnect",
-	function(message, errorOccurred)
-		log("Disconnected!", message, errorOccurred)
-        s:disconnect("lol")
-		s = nil
-		sleep(4)
-		Connect()
-	end
-)
---s:hook("OnRaw", function(line) log(line) end)
 
 -- Setup feed checker intervals
 for i = 1, #FEEDS do

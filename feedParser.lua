@@ -45,8 +45,8 @@ local function CheckFeed(s, curFeed)
 		c = c + 1
 	end c = nil
 	if not xmlTxt then log("CHECK FAILED!") return end
-	local xml = xml.eval(xmlTxt)
-	local xchannel =  xml:find("rdf:RDF") or xml:find("channel") or xml:find("feed")
+	local rssxml = xml.eval(xmlTxt)
+	local xchannel =  rssxml:find("rdf:RDF") or rssxml:find("channel") or rssxml:find("feed")
 	local xitems = {}
 	if xchannel ~= nil then
 		for i = 1, #xchannel do
