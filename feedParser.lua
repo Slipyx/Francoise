@@ -24,7 +24,7 @@ require(cfgFile)
 local http = require("socket.http")
 require("luaxml")
 local dateUtils = require("dateUtils")
-local log = require("logger").log
+local log = require("logger")
 
 local function GetDate(item)
 	local pubDate = item:find("pubDate") or item:find("dc:date") or item:find("updated")

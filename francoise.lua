@@ -31,7 +31,7 @@ local sleep = require("socket").sleep
 require(cfgFile)
 local timer = require("hump.timer")
 local feedParser = require("feedParser")
-local log = require("logger").log
+local log = require("logger")
 
 -- Frame time vars
 local tt = 0
@@ -48,8 +48,8 @@ local function Connect()
         s = irc.new(USER)
     end
     --s:hook("OnRaw", function(line) log(line) end) -- Raw logging
-	log("Connecting...")
-	if not pcall(s.connect, s, CONNECTION) then
+    log("Connecting...")
+    if not pcall(s.connect, s, CONNECTION) then
         Reconnect("Connect attempt failed!", true)
     else
         s:hook("OnDisconnect", Reconnect)
