@@ -22,18 +22,20 @@ misrepresented as being the original software.
 
 local date = os.date
 local print = print
+local format = string.format
+local tostring = tostring
 
 local function log(...)
 	local vargs = {...}
 	local logString = ""
 
-	if #vargs >= 1 then logString = string.format("%s", tostring(vargs[1]))
+	if #vargs >= 1 then logString = format("%s", tostring(vargs[1]))
 		for i = 2, #vargs do
-			logString = string.format("%s      %s", logString, tostring(vargs[i]))
+			logString = format("%s      %s", logString, tostring(vargs[i]))
 		end
 	end
 
-	print(string.format("[%s] %s", date("%Y.%m.%d %H.%M.%S"), logString))
+	print(format("[%s] %s", date("%Y.%m.%d %H.%M.%S"), logString))
 end
 
 return log

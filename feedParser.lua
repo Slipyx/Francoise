@@ -25,18 +25,22 @@ local http = require("socket.http")
 require("luaxml")
 local dateUtils = require("dateUtils")
 local log = require("logger")
+-- Localize some std functions
+local sub = string.sub
+local format = string.format
+local insert = table.insert
 
 local function GetDate(item)
 	local pubDate = item:find("pubDate") or item:find("dc:date") or item:find("updated")
 	if not pubDate then log("PUBDATE NOT FOUND!") return end
 	pubDate = pubDate[1]
-	if string.sub(pubDate, 1, 1) == "2" then pubDate = dateUtils.DcToPub(pubDate) end
+	if sub(pubDate, 1, 1) == "2" then pubDate = dateUtils.DcToPub(pubDate) end
 	return pubDate
 end
 
 local function CheckFeed(s, curFeed)
 	-- Check feed
-	log(string.format("Checking (%d) %s...", curFeed, FEEDS[curFeed].name))
+	log(format("Checking (%d) %s...", curFeed, FEEDS[curFeed].name))
 	local xmlTxt
 	local c = 1
 	while xmlTxt == nil and c < 5 do
@@ -51,7 +55,7 @@ local function CheckFeed(s, curFeed)
 	if xchannel ~= nil then
 		for i = 1, #xchannel do
 			if xchannel[i][0] == "item" or xchannel[i][0] == "entry" then
-				table.insert(xitems, xchannel[i])
+				insert(xitems, xchannel[i])
 			end
 		end
 	end
@@ -62,7 +66,7 @@ local function CheckFeed(s, curFeed)
 		local pubDate = GetDate(xitems[i])
 		if not pubDate then return end
 		if dateUtils.DateIsNewer(FEEDS[curFeed].lastDate, pubDate) then
-			table.insert(xnewItems, xitems[i])
+			insert(xnewItems, xitems[i])
 		end
 		pubDate = nil
 	end
@@ -73,7 +77,7 @@ local function CheckFeed(s, curFeed)
 			local link = xnewItems[i]:find("link")[1] or xnewItems[i]:find("id")[1]
 			log("NEW " .. FEEDS[curFeed].name .. " ITEM!")
 			for j = 1, #CHANNELS do
-				s:sendChat(CHANNELS[j], string.format("%s%s: %s <15%s>", FEEDS[curFeed].c, FEEDS[curFeed].name, xnewItems[i][1][1], link))
+				s:sendChat(CHANNELS[j], format("%s%s: %s <15%s>", FEEDS[curFeed].c, FEEDS[curFeed].name, xnewItems[i][1][1], link))
 			end
 			link = nil
 		end

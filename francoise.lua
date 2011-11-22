@@ -32,6 +32,7 @@ require(cfgFile)
 local timer = require("hump.timer")
 local feedParser = require("feedParser")
 local log = require("logger")
+local clock = os.clock
 
 -- Frame time vars
 local tt = 0
@@ -81,9 +82,9 @@ end
 
 -- Main Loop
 while true do
-	tt = os.clock()
+	tt = clock()
 	s:think()
 	timer.update(dt)
 	sleep(1)
-	dt = os.clock() - tt
+	dt = clock() - tt
 end
